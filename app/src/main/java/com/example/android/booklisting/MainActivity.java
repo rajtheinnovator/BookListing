@@ -62,8 +62,7 @@ public class MainActivity extends AppCompatActivity {
                     Toast toast = Toast.makeText(context, text, duration);
                     toast.show();
                 } else {
-                    searchQuery.replace(" ", "+");
-                    String appendableQuery = searchQuery + "&maxResults=10";
+                    String appendableQuery = searchQuery + "&key=AIzaSyAN16J8Zakn2RQbFV4iBB8JrFPnFIev2wE&maxResults=10&country=IN";
                     BOOK_REQUEST_URL += appendableQuery;
                     BookAsyncTask task = new BookAsyncTask();
                     //If network is available then perform the further task of AsynckTask calling
@@ -215,17 +214,19 @@ public class MainActivity extends AppCompatActivity {
             try {
                 Log.e(LOG_TAG, googleBooksJSON);
                 JSONObject baseJsonResponse = new JSONObject(googleBooksJSON);
-                JSONObject volumeInfo = baseJsonResponse.getJSONObject("volumeInfo");
-                Log.v(LOG_TAG, "the volumeInfo is: " + volumeInfo.toString());
-                String title = volumeInfo.getString("title");
-                JSONArray authors = volumeInfo.getJSONArray("authors");
-                if (authors.length() > 0) {
-                    String firstAuthor = authors.getString(0);
+                JSONArray itemsArray = baseJsonResponse.getJSONArray("items");
+                if (itemsArray.length() > 0) {
+                    JSONObject volumeInfo = itemsArray.getJSONObject(0).getJSONObject("volumeInfo");
+//                    Log.v(LOG_TAG, "the volumeInfo is: " + volumeInfo.toString());
+                    String title = volumeInfo.getString("title");
+                    JSONArray authors = volumeInfo.getJSONArray("authors");
+                    if (authors.length() > 0) {
+                        String firstAuthor = authors.getString(0);
 
-                    // Create a new {@link Event} object
-                    return new Event(title, firstAuthor);
+                        // Create a new {@link Event} object
+                        return new Event(title, firstAuthor);
+                    }
                 }
-
             } catch (JSONException e) {
                 Log.e(LOG_TAG, "Problem parsing the Google Books JSON results", e);
             }
