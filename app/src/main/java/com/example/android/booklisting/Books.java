@@ -4,21 +4,27 @@ package com.example.android.booklisting;
  * Created by ABHISHEK RAJ on 9/22/2016.
  */
 
-public class Event {
+public class Books {
     /** Title of the earthquake event */
-    public final String title;
+    private final String title;
 
     /** Time that the earthquake happened (in milliseconds) */
-    public final String author;
+    private final String author;
 
         /**
-     * Constructs a new {@link Event}.
+     * Constructs a new {@link Books}.
      *
      * @param eventTitle is the title of the earthquake event
      * @param eventAuthor is the time the earhtquake happened
      */
-    public Event(String eventTitle, String eventAuthor) {
+    public Books(String eventTitle, String eventAuthor) {
         title = eventTitle;
         author = eventAuthor;
+    }
+    public String getTitle(){
+        return title;
+    }
+    public String getAuthor(){
+        return author;
     }
 }

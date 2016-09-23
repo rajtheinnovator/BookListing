@@ -10,6 +10,8 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ListAdapter;
+import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -25,9 +27,7 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.charset.Charset;
-import java.text.SimpleDateFormat;
-
-import static android.R.attr.key;
+import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
     private EditText searchText;
@@ -36,7 +36,6 @@ public class MainActivity extends AppCompatActivity {
      * Tag for the log messages
      */
     public static final String LOG_TAG = MainActivity.class.getSimpleName();
-
     /**
      * URL to query the GoogleBook dataset for book's information
      */
@@ -51,11 +50,9 @@ public class MainActivity extends AppCompatActivity {
         search.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                searchText = (EditText) findViewById(R.id.searchQuery);
-                searchQuery = searchText.getText().toString().replace(" ", "+");
-//                searchText.setText(null);
+                //Find the edit text's actual text and make it compatible for a url search query
+                searchQuery = ((EditText) findViewById(R.id.searchQuery)).getText().toString().replace(" ", "+");
 
-                //String searchQuery = findViewById(R.id.searchQuery).toString();
                 //Check if user input is empty or it contains some query text
                 if (searchQuery.isEmpty()) {
                     Context context = getApplicationContext();
@@ -64,15 +61,15 @@ public class MainActivity extends AppCompatActivity {
                     Toast toast = Toast.makeText(context, text, duration);
                     toast.show();
                 } else {
-
+                    // String to be attached to the BOOK_REQUEST_URL
                     String appendableQuery = searchQuery + "&key=AIzaSyAN16J8Zakn2RQbFV4iBB8JrFPnFIev2wE&maxResults=10&country=IN";
-                    BOOK_REQUEST_URL += appendableQuery;
+                    BOOK_REQUEST_URL += appendableQuery; //final value of "URL for Google Book API"
                     BookAsyncTask task = new BookAsyncTask();
                     //If network is available then perform the further task of AsynckTask calling
                     if (isNetworkAvailable()) {
                         // Kick off an {@link AsyncTask} to perform the network request
                         task.execute();
-                    }else {
+                    } else {
                         Toast.makeText(getApplicationContext(), "Network not available", Toast.LENGTH_SHORT).show();
                     }
                 }
@@ -89,27 +86,24 @@ public class MainActivity extends AppCompatActivity {
     }
 
     /**
-     * Update the screen to display information from the given {@link Event}.
+     * Update the screen to display information from the given {@link Books}.
      */
-    private void updateUi(Event book) {
-        // Display the book title in the UI
-        TextView titleTextView = (TextView) findViewById(R.id.title);
-        titleTextView.setText(book.title);
-
-        // Display the book date in the UI
-        TextView authorTextView = (TextView) findViewById(R.id.author);
-        authorTextView.setText(book.author);
-
+    private void updateUi(Books book) {
+        final ArrayList<Books> books = new ArrayList<Books>();
+        books.add(new Books(book.getTitle(), book.getAuthor()));
+        ListView listView = (ListView) findViewById(R.id.list);
+        BooksAdapter booksAdapter = new BooksAdapter(MainActivity.this, books);
+        listView.setAdapter(booksAdapter);
     }
 
     /**
      * {@link AsyncTask} to perform the network request on a background thread, and then
      * update the UI with the first earthquake in the response.
      */
-    private class BookAsyncTask extends AsyncTask<URL, Void, Event> {
+    private class BookAsyncTask extends AsyncTask<URL, Void, Books> {
 
         @Override
-        protected Event doInBackground(URL... urls) {
+        protected Books doInBackground(URL... urls) {
             // Create URL object
             URL url = createUrl(BOOK_REQUEST_URL);
 
@@ -121,10 +115,10 @@ public class MainActivity extends AppCompatActivity {
                 // TODO Handle the IOException
             }
 
-            // Extract relevant fields from the JSON response and create an {@link Event} object
-            Event book = extractFeatureFromJson(jsonResponse);
+            // Extract relevant fields from the JSON response and create an {@link Books} object
+            Books book = extractFeatureFromJson(jsonResponse);
 
-            // Return the {@link Event} object as the result fo the {@link BookAsyncTask}
+            // Return the {@link Books} object as the result fo the {@link BookAsyncTask}
             return book;
         }
 
@@ -133,14 +127,14 @@ public class MainActivity extends AppCompatActivity {
          * {@link BookAsyncTask}).
          */
         @Override
-        protected void onPostExecute(Event book) {
+        protected void onPostExecute(Books book) {
             if (book == null) {
                 return;
             }
             updateUi(book);
             EditText editText = (EditText) findViewById(R.id.searchQuery);
             editText.setText(null);
-            BOOK_REQUEST_URL = "https://www.googleapis.com/books/v1/volumes?q=";
+            BOOK_REQUEST_URL = "https://www.googleapis.com/books/v1/volumes?q=";  //Reset the to the original URL
         }
 
         /**
@@ -214,10 +208,10 @@ public class MainActivity extends AppCompatActivity {
         }
 
         /**
-         * Return an {@link Event} object by parsing out information
+         * Return an {@link Books} object by parsing out information
          * about the first earthquake from the input googleBooksJSON string.
          */
-        private Event extractFeatureFromJson(String googleBooksJSON) {
+        private Books extractFeatureFromJson(String googleBooksJSON) {
             try {
                 Log.e(LOG_TAG, googleBooksJSON);
                 JSONObject baseJsonResponse = new JSONObject(googleBooksJSON);
@@ -230,8 +224,8 @@ public class MainActivity extends AppCompatActivity {
                     if (authors.length() > 0) {
                         String firstAuthor = authors.getString(0);
 
-                        // Create a new {@link Event} object
-                        return new Event(title, firstAuthor);
+                        // Create a new {@link Books} object
+                        return new Books(title, firstAuthor);
                     }
                 }
             } catch (JSONException e) {
