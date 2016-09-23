@@ -31,6 +31,7 @@ import static android.R.attr.key;
 
 public class MainActivity extends AppCompatActivity {
     private EditText searchText;
+    private String searchQuery;
     /**
      * Tag for the log messages
      */
@@ -51,7 +52,8 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 searchText = (EditText) findViewById(R.id.searchQuery);
-                String searchQuery = searchText.getText().toString().replace(" ", "+");
+                searchQuery = searchText.getText().toString().replace(" ", "+");
+//                searchText.setText(null);
 
                 //String searchQuery = findViewById(R.id.searchQuery).toString();
                 //Check if user input is empty or it contains some query text
@@ -62,14 +64,16 @@ public class MainActivity extends AppCompatActivity {
                     Toast toast = Toast.makeText(context, text, duration);
                     toast.show();
                 } else {
-                    searchQuery.replace(" ", "+");
-                    String appendableQuery = searchQuery + "&maxResults=10";
+
+                    String appendableQuery = searchQuery + "&key=AIzaSyAN16J8Zakn2RQbFV4iBB8JrFPnFIev2wE&maxResults=10&country=IN";
                     BOOK_REQUEST_URL += appendableQuery;
                     BookAsyncTask task = new BookAsyncTask();
                     //If network is available then perform the further task of AsynckTask calling
                     if (isNetworkAvailable()) {
                         // Kick off an {@link AsyncTask} to perform the network request
                         task.execute();
+                    }else {
+                        Toast.makeText(getApplicationContext(), "Network not available", Toast.LENGTH_SHORT).show();
                     }
                 }
             }
@@ -133,8 +137,10 @@ public class MainActivity extends AppCompatActivity {
             if (book == null) {
                 return;
             }
-
             updateUi(book);
+            EditText editText = (EditText) findViewById(R.id.searchQuery);
+            editText.setText(null);
+            BOOK_REQUEST_URL = "https://www.googleapis.com/books/v1/volumes?q=";
         }
 
         /**
@@ -215,17 +221,19 @@ public class MainActivity extends AppCompatActivity {
             try {
                 Log.e(LOG_TAG, googleBooksJSON);
                 JSONObject baseJsonResponse = new JSONObject(googleBooksJSON);
-                JSONObject volumeInfo = baseJsonResponse.getJSONObject("volumeInfo");
-                Log.v(LOG_TAG, "the volumeInfo is: " + volumeInfo.toString());
-                String title = volumeInfo.getString("title");
-                JSONArray authors = volumeInfo.getJSONArray("authors");
-                if (authors.length() > 0) {
-                    String firstAuthor = authors.getString(0);
+                JSONArray itemsArray = baseJsonResponse.getJSONArray("items");
+                if (itemsArray.length() > 0) {
+                    JSONObject volumeInfo = itemsArray.getJSONObject(0).getJSONObject("volumeInfo");
+//                    Log.v(LOG_TAG, "the volumeInfo is: " + volumeInfo.toString());
+                    String title = volumeInfo.getString("title");
+                    JSONArray authors = volumeInfo.getJSONArray("authors");
+                    if (authors.length() > 0) {
+                        String firstAuthor = authors.getString(0);
 
-                    // Create a new {@link Event} object
-                    return new Event(title, firstAuthor);
+                        // Create a new {@link Event} object
+                        return new Event(title, firstAuthor);
+                    }
                 }
-
             } catch (JSONException e) {
                 Log.e(LOG_TAG, "Problem parsing the Google Books JSON results", e);
             }
