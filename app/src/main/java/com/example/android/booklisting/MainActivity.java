@@ -30,7 +30,6 @@ import java.nio.charset.Charset;
 import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
-    private EditText searchText;
     private String searchQuery;
     /**
      * Tag for the log messages
@@ -52,7 +51,6 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View view) {
                 //Find the edit text's actual text and make it compatible for a url search query
                 searchQuery = ((EditText) findViewById(R.id.searchQuery)).getText().toString().replace(" ", "+");
-
                 //Check if user input is empty or it contains some query text
                 if (searchQuery.isEmpty()) {
                     Context context = getApplicationContext();
@@ -88,11 +86,11 @@ public class MainActivity extends AppCompatActivity {
     /**
      * Update the screen to display information from the given {@link Books}.
      */
-    private void updateUi(Books book) {
-        final ArrayList<Books> books = new ArrayList<Books>();
-        books.add(new Books(book.getTitle(), book.getAuthor()));
+    private void updateUi(ArrayList<Books> book) {
+//        final ArrayList<Books> books = new ArrayList<Books>();
+//        books.add(new Books(book.getTitle(), book.getAuthor()));
         ListView listView = (ListView) findViewById(R.id.list);
-        BooksAdapter booksAdapter = new BooksAdapter(MainActivity.this, books);
+        BooksAdapter booksAdapter = new BooksAdapter(MainActivity.this, book);
         listView.setAdapter(booksAdapter);
     }
 
@@ -100,10 +98,9 @@ public class MainActivity extends AppCompatActivity {
      * {@link AsyncTask} to perform the network request on a background thread, and then
      * update the UI with the first earthquake in the response.
      */
-    private class BookAsyncTask extends AsyncTask<URL, Void, Books> {
-
+    private class BookAsyncTask extends AsyncTask<URL, Void, ArrayList<Books>> {
         @Override
-        protected Books doInBackground(URL... urls) {
+        protected ArrayList<Books> doInBackground(URL... urls) {
             // Create URL object
             URL url = createUrl(BOOK_REQUEST_URL);
 
@@ -116,7 +113,7 @@ public class MainActivity extends AppCompatActivity {
             }
 
             // Extract relevant fields from the JSON response and create an {@link Books} object
-            Books book = extractFeatureFromJson(jsonResponse);
+            ArrayList<Books> book = extractFeatureFromJson(jsonResponse);
 
             // Return the {@link Books} object as the result fo the {@link BookAsyncTask}
             return book;
@@ -127,7 +124,7 @@ public class MainActivity extends AppCompatActivity {
          * {@link BookAsyncTask}).
          */
         @Override
-        protected void onPostExecute(Books book) {
+        protected void onPostExecute(ArrayList<Books> book) {
             if (book == null) {
                 return;
             }
@@ -145,7 +142,7 @@ public class MainActivity extends AppCompatActivity {
             try {
                 url = new URL(stringUrl);
             } catch (MalformedURLException exception) {
-                Log.e(LOG_TAG, "Error with creating URL", exception);
+                Toast.makeText(MainActivity.this, "Error Creating URL", Toast.LENGTH_SHORT).show();
                 return null;
             }
             return url;
@@ -171,12 +168,12 @@ public class MainActivity extends AppCompatActivity {
                     inputStream = urlConnection.getInputStream();
                     jsonResponse = readFromStream(inputStream);
                 } else {
-                    Log.e("LOG_TAG", "Error Response Code: " + urlConnection.getResponseCode());
+                    Toast.makeText(MainActivity.this, "Error Response Code: "
+                            + urlConnection.getResponseCode(), Toast.LENGTH_SHORT).show();
                 }
-
             } catch (IOException e) {
                 // TODO: Handle the exception
-                Log.e("IOException :", e.getMessage());
+                Toast.makeText(MainActivity.this, "There is an IO exception: " + e.getMessage(), Toast.LENGTH_SHORT).show();
             } finally {
                 if (urlConnection != null) {
                     urlConnection.disconnect();
@@ -211,25 +208,38 @@ public class MainActivity extends AppCompatActivity {
          * Return an {@link Books} object by parsing out information
          * about the first earthquake from the input googleBooksJSON string.
          */
-        private Books extractFeatureFromJson(String googleBooksJSON) {
+        private ArrayList<Books> extractFeatureFromJson(String googleBooksJSON) {
             try {
-                Log.e(LOG_TAG, googleBooksJSON);
+                ArrayList<Books> arrayListOfBooks = new ArrayList<Books>();
                 JSONObject baseJsonResponse = new JSONObject(googleBooksJSON);
-                JSONArray itemsArray = baseJsonResponse.getJSONArray("items");
-                if (itemsArray.length() > 0) {
-                    JSONObject volumeInfo = itemsArray.getJSONObject(0).getJSONObject("volumeInfo");
-//                    Log.v(LOG_TAG, "the volumeInfo is: " + volumeInfo.toString());
-                    String title = volumeInfo.getString("title");
-                    JSONArray authors = volumeInfo.getJSONArray("authors");
-                    if (authors.length() > 0) {
-                        String firstAuthor = authors.getString(0);
-
-                        // Create a new {@link Books} object
-                        return new Books(title, firstAuthor);
+                //Check if the base/root JSONObject has the desired "key" of value "items" and then only proceed
+                if (baseJsonResponse.has("items")) {
+                    JSONArray itemsArray = baseJsonResponse.getJSONArray("items");
+                    if (itemsArray.length() > 0) {
+                        for (int i = 0; i < itemsArray.length(); i++) {
+                            JSONObject volumeInfo = itemsArray.getJSONObject(i).getJSONObject("volumeInfo");
+                            //Check if the JSONObject volumeInfo has the desired string with value "title" and then only proceed
+                            if (volumeInfo.has("title")) {
+                                String title = volumeInfo.getString("title");
+                                //Check if the JSONObject volumeInfo has the desired string with value "authors" and then only proceed
+                                if (volumeInfo.has("authors")) {
+                                    JSONArray authors = volumeInfo.getJSONArray("authors");
+                                    if (authors.length() > 0) {
+                                        //get first author's name
+                                        String firstAuthor = authors.getString(0);
+                                        arrayListOfBooks.add(new Books(title, firstAuthor));
+                                    }
+                                } else {
+                                    arrayListOfBooks.add(new Books(title, "author not found"));
+                                }
+                            }
+                        }
                     }
-                }
+                    return arrayListOfBooks;
+                }else Toast.makeText(MainActivity.this, "No Book found, search again", Toast.LENGTH_SHORT).show();
+
             } catch (JSONException e) {
-                Log.e(LOG_TAG, "Problem parsing the Google Books JSON results", e);
+                Toast.makeText(MainActivity.this, "Problem parsing the Google Books JSON results" + e, Toast.LENGTH_SHORT).show();
             }
             return null;
         }

@@ -30,7 +30,7 @@ public class BooksAdapter extends ArrayAdapter<Books> {
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         // Get the data item for this position
-        Books currentBook = getItem(position);
+        final Books currentBook = getItem(position);
         // Check if an existing view is being reused, otherwise inflate the view
         ViewHolder viewHolder; // view lookup cache stored in tag
         if (convertView == null) {
