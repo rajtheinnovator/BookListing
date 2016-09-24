@@ -21,6 +21,7 @@ public class BooksAdapter extends ArrayAdapter<Books> {
     private static class ViewHolder {
         TextView title;
         TextView author;
+        TextView publisher;
     }
 
     public BooksAdapter(Context context, ArrayList<Books> books){
@@ -41,6 +42,7 @@ public class BooksAdapter extends ArrayAdapter<Books> {
                         /*Find the TextView and ImageView and set them on the VIewHolder*/
             viewHolder.title = (TextView) convertView.findViewById(R.id.title);
             viewHolder.author = (TextView) convertView.findViewById(R.id.author);
+            viewHolder.publisher = (TextView) convertView.findViewById(R.id.publisher);
 //            /* Check if the current position list item has a image, and if has then set the
 //            * visibility to True otherwise make it disapper using View.GONE
 //            */
@@ -60,6 +62,7 @@ public class BooksAdapter extends ArrayAdapter<Books> {
         // Populate the data into the template view using the data object
         viewHolder.title.setText(currentBook.getTitle());
         viewHolder.author.setText(currentBook.getAuthor());
+        viewHolder.publisher.setText(currentBook.getPublisher());
         return convertView;
     }
 }

@@ -221,22 +221,25 @@ public class MainActivity extends AppCompatActivity {
                             //Check if the JSONObject volumeInfo has the desired string with value "title" and then only proceed
                             if (volumeInfo.has("title")) {
                                 String title = volumeInfo.getString("title");
+                               // String publisher = volumeInfo.getString("publisher");
                                 //Check if the JSONObject volumeInfo has the desired string with value "authors" and then only proceed
                                 if (volumeInfo.has("authors")) {
                                     JSONArray authors = volumeInfo.getJSONArray("authors");
                                     if (authors.length() > 0) {
                                         //get first author's name
                                         String firstAuthor = authors.getString(0);
-                                        arrayListOfBooks.add(new Books(title, firstAuthor));
+                                        if (volumeInfo.has("publisher")) {
+                                            String publisher = volumeInfo.getString("publisher");
+                                            arrayListOfBooks.add(new Books(title, firstAuthor, publisher));
+                                        }
                                     }
-                                } else {
-                                    arrayListOfBooks.add(new Books(title, "author not found"));
                                 }
                             }
                         }
                     }
                     return arrayListOfBooks;
-                }else Toast.makeText(MainActivity.this, "No Book found, search again", Toast.LENGTH_SHORT).show();
+                } else
+                    Toast.makeText(MainActivity.this, "No Book found, search again", Toast.LENGTH_SHORT).show();
 
             } catch (JSONException e) {
                 Toast.makeText(MainActivity.this, "Problem parsing the Google Books JSON results" + e, Toast.LENGTH_SHORT).show();
