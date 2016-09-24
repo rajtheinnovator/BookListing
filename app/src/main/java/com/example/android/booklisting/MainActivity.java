@@ -29,7 +29,21 @@ import java.net.URL;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 
+import static android.R.attr.description;
+
 public class MainActivity extends AppCompatActivity {
+
+    String title;
+    String firstAuthor;
+    String publisher;
+    String pageCount;
+    String description;
+    int averageRating;
+    String publishedDate;
+    String isbnType;
+    String isbnValue;
+    Books booksObject = new Books();
+
     private String searchQuery;
     /**
      * Tag for the log messages
@@ -69,6 +83,8 @@ public class MainActivity extends AppCompatActivity {
                         task.execute();
                     } else {
                         Toast.makeText(getApplicationContext(), "Network not available", Toast.LENGTH_SHORT).show();
+                        //Reset the to the original URL to prevent app crash
+                        BOOK_REQUEST_URL = "https://www.googleapis.com/books/v1/volumes?q=";
                     }
                 }
             }
@@ -87,11 +103,15 @@ public class MainActivity extends AppCompatActivity {
      * Update the screen to display information from the given {@link Books}.
      */
     private void updateUi(ArrayList<Books> book) {
-//        final ArrayList<Books> books = new ArrayList<Books>();
-//        books.add(new Books(book.getTitle(), book.getAuthor()));
         ListView listView = (ListView) findViewById(R.id.list);
         BooksAdapter booksAdapter = new BooksAdapter(MainActivity.this, book);
         listView.setAdapter(booksAdapter);
+        //create bundle for Book's details Intent
+        Bundle bookDetailsBundle = new Bundle();
+        ArrayList<Books> booksDetails = new ArrayList<Books>();
+        booksDetails.add(new Books(booksObject.getTitle(), booksObject.getAuthor(), booksObject.getPublisher(),
+                booksObject.getPageCount(), booksObject.getDescription(), booksObject.getRatings(),
+                booksObject.getPublishedDate(), booksObject.getISBNType(), booksObject.getISBNValue()));
     }
 
     /**
@@ -220,20 +240,44 @@ public class MainActivity extends AppCompatActivity {
                             JSONObject volumeInfo = itemsArray.getJSONObject(i).getJSONObject("volumeInfo");
                             //Check if the JSONObject volumeInfo has the desired string with value "title" and then only proceed
                             if (volumeInfo.has("title")) {
-                                String title = volumeInfo.getString("title");
-                               // String publisher = volumeInfo.getString("publisher");
-                                //Check if the JSONObject volumeInfo has the desired string with value "authors" and then only proceed
-                                if (volumeInfo.has("authors")) {
-                                    JSONArray authors = volumeInfo.getJSONArray("authors");
-                                    if (authors.length() > 0) {
-                                        //get first author's name
-                                        String firstAuthor = authors.getString(0);
-                                        if (volumeInfo.has("publisher")) {
-                                            String publisher = volumeInfo.getString("publisher");
-                                            arrayListOfBooks.add(new Books(title, firstAuthor, publisher));
-                                        }
-                                    }
-                                }
+                                title = volumeInfo.getString("title");
+                                booksObject.setTitle(title);
+                            }
+                            // String publisher = volumeInfo.getString("publisher");
+                            //Check if the JSONObject volumeInfo has the desired string with value "authors" and then only proceed
+                            if (volumeInfo.has("authors")) {
+                                JSONArray authors = volumeInfo.getJSONArray("authors");
+                                //get first author's name
+                                firstAuthor = authors.getString(0);
+                                booksObject.setAuthor(firstAuthor);
+                            }
+                            if (volumeInfo.has("publisher")) {
+                                publisher = volumeInfo.getString("publisher");
+                                booksObject.setPublisher(publisher);
+                            }
+                            arrayListOfBooks.add(new Books(booksObject.getTitle(),
+                                    booksObject.getAuthor(), booksObject.getPublisher()));
+                            if (volumeInfo.has("pageCount")) {
+                                pageCount = volumeInfo.getString("pageCount");
+                                booksObject.setPageCount(pageCount);
+                            }
+                            if (volumeInfo.has("description")) {
+                                description = volumeInfo.getString("description");
+                                booksObject.setDescription(description);
+                            }
+                            if (volumeInfo.has("averageRating")) {
+                                averageRating = volumeInfo.getInt("averageRating");
+                                booksObject.setRatings(averageRating);
+                            }
+                            if (volumeInfo.has("publishedDate")) {
+                                publishedDate = volumeInfo.getString("publishedDate");
+                                booksObject.setPublishedDate(publishedDate);
+                            }
+                            if (volumeInfo.has("industryIdentifiers")) {
+                                JSONArray industryIdentifiers = volumeInfo.getJSONArray("industryIdentifiers");
+                                JSONObject firstISBN = industryIdentifiers.getJSONObject(0);
+                                isbnType = firstISBN.getString("type");
+                                isbnValue = firstISBN.getString("identifier");
                             }
                         }
                     }
