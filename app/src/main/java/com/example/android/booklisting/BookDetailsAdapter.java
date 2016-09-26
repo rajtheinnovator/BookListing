@@ -7,6 +7,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.ImageView;
 import android.widget.TextView;
 import java.util.ArrayList;
 
@@ -47,8 +48,10 @@ public class BookDetailsAdapter extends ArrayAdapter<Books> {
         TextView publication_date_book = (TextView) listItemView.findViewById(R.id.publication_date_book);
         TextView isbn_type_book = (TextView) listItemView.findViewById(R.id.isbn_type_book);
         TextView isbn_value_book = (TextView) listItemView.findViewById(R.id.isbn_value_book);
+        ImageView bookImageView = (ImageView) listItemView.findViewById(R.id.book_image);
 
              // set this text on these TextViews
+        //bookImageView.setImageBitmap();
         title_book.setText(currentBook.getTitle());
         author_book.setText(currentBook.getAuthor());
         publisher_book.setText(currentBook.getPublisher());

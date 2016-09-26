@@ -19,13 +19,13 @@ public class BookDetailsActivity extends AppCompatActivity {
         setContentView(R.layout.book_details_listview);
         Books book = getIntent().getParcelableExtra("booksObjectBundle");
         ArrayList<Books> books = new ArrayList<Books>();
-        books.add(new Books(book.getTitle(), book.getAuthor(), book.getPublisher(), book.getPageCount(), book.getDescription(),
-                book.getRatings(), book.getPublishedDate(), book.getISBNType(), book.getISBNValue()));
+        books.add(new Books(book.getTitle(), book.getAuthor(), book.getPublisher(),
+                book.getPageCount(), book.getDescription(), book.getRatings(),
+                book.getPublishedDate(), book.getISBNType(), book.getISBNValue(), book.getBookImageResourceURL()));
 
         BookDetailsAdapter bookDetailsAdapter = new BookDetailsAdapter(BookDetailsActivity.this, books);
         ListView listView = (ListView) findViewById(R.id.book_details_listview);
+        this.setTitle(book.getTitle());
         listView.setAdapter(bookDetailsAdapter);
-        Log.v("LOG_TAG", "The result is "+book );
-        Log.v("My Book Title", book.getTitle());
     }
 }

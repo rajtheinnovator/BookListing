@@ -26,7 +26,7 @@ public class Books implements Parcelable {
     private String mPublishedDate;
     private String mISBNType;
     private String mISBNValue;
-    private int mVolumeId;
+    private String mBookImageResourceURL;
 
     //    private final String mImageLink;
     //    private final String mPreviewLink;
@@ -54,7 +54,8 @@ public class Books implements Parcelable {
      * @param publisher  is the publisher of the book
      */
     public Books(String bookTitle, String bookAuthor, String publisher, String pageCount,
-                 String description, int ratings, String publishedDate, String iSBNType, String iSBNValue) {
+                 String description, int ratings, String publishedDate, String iSBNType,
+                 String iSBNValue, String bookImageResourceURL) {
         mTitle = bookTitle;
         mAuthor = bookAuthor;
         mPublisher = publisher;
@@ -64,14 +65,15 @@ public class Books implements Parcelable {
         mPublishedDate = publishedDate;
         mISBNType = iSBNType;
         mISBNValue = iSBNValue;
+        mBookImageResourceURL = bookImageResourceURL;
     }
 
-    public void setVolumeId(int volumeId) {
-        mVolumeId = volumeId;
+    public void setBookImageResourceURL(String bookImageResourceURL) {
+        mBookImageResourceURL = bookImageResourceURL;
     }
 
-    public int getVolumeId() {
-        return mVolumeId;
+    public String getBookImageResourceURL() {
+        return mBookImageResourceURL;
     }
 
     public void setTitle(String title) {
@@ -153,7 +155,7 @@ public class Books implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel out, int flags) {
-        out.writeInt(mVolumeId);
+        out.writeString(mBookImageResourceURL);
         out.writeString(mTitle);
         out.writeString(mAuthor);
         out.writeString(mPublisher);
@@ -166,7 +168,7 @@ public class Books implements Parcelable {
     }
 
     private Books(Parcel in) {
-        mVolumeId = in.readInt();
+        mBookImageResourceURL = in.readString();
         mTitle = in.readString();
         mAuthor = in.readString();
         mPublisher = in.readString();

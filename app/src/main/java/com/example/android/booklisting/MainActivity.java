@@ -42,6 +42,7 @@ public class MainActivity extends AppCompatActivity {
     String publishedDate;
     String isbnType;
     String isbnValue;
+    String bookImageResourceURL;
     private ArrayList<Books> mBooks;
     Books booksObject = new Books();
 
@@ -58,38 +59,38 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-            super.onCreate(savedInstanceState);
-            setContentView(R.layout.activity_main);
-            Button search = (Button) findViewById(R.id.search);
-            search.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    //Find the edit text's actual text and make it compatible for a url search query
-                    searchQuery = ((EditText) findViewById(R.id.searchQuery)).getText().toString().replace(" ", "+");
-                    //Check if user input is empty or it contains some query text
-                    if (searchQuery.isEmpty()) {
-                        Context context = getApplicationContext();
-                        String text = "Nothing Entered in Search";
-                        int duration = Toast.LENGTH_LONG;
-                        Toast toast = Toast.makeText(context, text, duration);
-                        toast.show();
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+        Button search = (Button) findViewById(R.id.search);
+        search.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                //Find the edit text's actual text and make it compatible for a url search query
+                searchQuery = ((EditText) findViewById(R.id.searchQuery)).getText().toString().replace(" ", "+");
+                //Check if user input is empty or it contains some query text
+                if (searchQuery.isEmpty()) {
+                    Context context = getApplicationContext();
+                    String text = "Nothing Entered in Search";
+                    int duration = Toast.LENGTH_LONG;
+                    Toast toast = Toast.makeText(context, text, duration);
+                    toast.show();
+                } else {
+                    // String to be attached to the BOOK_REQUEST_URL
+                    String appendableQuery = searchQuery + "&key=AIzaSyAN16J8Zakn2RQbFV4iBB8JrFPnFIev2wE&maxResults=10&country=IN";
+                    BOOK_REQUEST_URL += appendableQuery; //final value of "URL for Google Book API"
+                    BookAsyncTask task = new BookAsyncTask();
+                    //If network is available then perform the further task of AsynckTask calling
+                    if (isNetworkAvailable()) {
+                        // Kick off an {@link AsyncTask} to perform the network request
+                        task.execute();
                     } else {
-                        // String to be attached to the BOOK_REQUEST_URL
-                        String appendableQuery = searchQuery + "&key=AIzaSyAN16J8Zakn2RQbFV4iBB8JrFPnFIev2wE&maxResults=10&country=IN";
-                        BOOK_REQUEST_URL += appendableQuery; //final value of "URL for Google Book API"
-                        BookAsyncTask task = new BookAsyncTask();
-                        //If network is available then perform the further task of AsynckTask calling
-                        if (isNetworkAvailable()) {
-                            // Kick off an {@link AsyncTask} to perform the network request
-                            task.execute();
-                        } else {
-                            Toast.makeText(getApplicationContext(), "Network not available", Toast.LENGTH_SHORT).show();
-                            //Reset the to the original URL to prevent app crash
-                            BOOK_REQUEST_URL = "https://www.googleapis.com/books/v1/volumes?q=";
-                        }
+                        Toast.makeText(getApplicationContext(), "Network not available", Toast.LENGTH_SHORT).show();
+                        //Reset the to the original URL to prevent app crash
+                        BOOK_REQUEST_URL = "https://www.googleapis.com/books/v1/volumes?q=";
                     }
                 }
-            });
+            }
+        });
     }
 
     //Check if network is available or not
@@ -275,7 +276,6 @@ public class MainActivity extends AppCompatActivity {
                         for (int i = 0; i < itemsArray.length(); i++) {
                             JSONObject volumeInfo = itemsArray.getJSONObject(i).getJSONObject("volumeInfo");
                             //Check if the JSONObject volumeInfo has the desired string with value "title" and then only proceed
-                            booksObject.setVolumeId(i);
                             if (volumeInfo.has("title")) {
                                 title = volumeInfo.getString("title");
                                 booksObject.setTitle(title);
@@ -327,9 +327,19 @@ public class MainActivity extends AppCompatActivity {
                                 booksObject.setISBNType(isbnType);
                                 booksObject.setISBNValue(isbnValue);
                             }
+                            if (volumeInfo.has("thumbnail")){
+                                bookImageResourceURL = volumeInfo.getString("thumbnail");
+                                booksObject.setBookImageResourceURL(bookImageResourceURL);
+                            }else {
+                                if (volumeInfo.has("smallThumbnail")){
+                                    bookImageResourceURL = volumeInfo.getString("smallThumbnail");
+                                    booksObject.setBookImageResourceURL("smallThumbnail");
+                                }
+                            }
                             arrayListOfBooks.add(new Books(booksObject.getTitle(), booksObject.getAuthor(), booksObject.getPublisher(),
                                     booksObject.getPageCount(), booksObject.getDescription(), booksObject.getRatings(),
-                                    booksObject.getPublishedDate(), booksObject.getISBNType(), booksObject.getISBNValue()));
+                                    booksObject.getPublishedDate(), booksObject.getISBNType(),
+                                    booksObject.getISBNValue(), booksObject.getBookImageResourceURL()));
                         }
                     }
                     return arrayListOfBooks;
