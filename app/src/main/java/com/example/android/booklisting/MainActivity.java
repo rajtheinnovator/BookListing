@@ -135,7 +135,18 @@ public class MainActivity extends AppCompatActivity {
             BooksAdapter adapter = new BooksAdapter(this, mBooks);
             ListView listView = (ListView) findViewById(R.id.list);
             listView.setAdapter(adapter);
+            listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
+                    //Books bookses = book.get(position);
+                    Books bookses = mBooks.get(position);
+                    Intent booksIntent = new Intent(getApplicationContext(), BookDetailsActivity.class);
+                    booksIntent.putExtra("booksObjectBundle", bookses);
+                    startActivity(booksIntent);
+                }
+            });
         }
+
         super.onRestoreInstanceState(savedInstanceState);
     }
 
