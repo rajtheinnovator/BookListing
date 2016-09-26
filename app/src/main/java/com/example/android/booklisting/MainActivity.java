@@ -28,6 +28,8 @@ import java.net.URL;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 
+import static android.R.attr.data;
+
 public class MainActivity extends AppCompatActivity {
 
 
@@ -122,20 +124,19 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public void onSaveInstanceState(Bundle savedInstanceState) {
         // Save the user's current game state
-        savedInstanceState.putParcelableArrayList("mBooks", mBooks);
+        savedInstanceState.putParcelableArrayList("booksObjectBundle", mBooks);
         // Always call the superclass so it can save the view hierarchy state
         super.onSaveInstanceState(savedInstanceState);
     }
 
     public void onRestoreInstanceState(Bundle savedInstanceState) {
-        // Always call the superclass so it can restore the view hierarchy
+        if (savedInstanceState != null) {
+            mBooks = savedInstanceState.getParcelableArrayList("booksObjectBundle");
+            BooksAdapter adapter = new BooksAdapter(this, mBooks);
+            ListView listView = (ListView) findViewById(R.id.list);
+            listView.setAdapter(adapter);
+        }
         super.onRestoreInstanceState(savedInstanceState);
-        // Restore state members from saved instance
-        mBooks = savedInstanceState.getParcelableArrayList("mBooks");
-        ListView listView1 = (ListView) findViewById(R.id.list);
-        BooksAdapter booksAdapter = new BooksAdapter(MainActivity.this, mBooks);
-        //booksAdapter.clear();
-        listView1.setAdapter(booksAdapter);
     }
 
     /**
@@ -273,6 +274,7 @@ public class MainActivity extends AppCompatActivity {
                             if (volumeInfo.has("authors")) {
                                 JSONArray authors = volumeInfo.getJSONArray("authors");
                                 //get author(s) name
+                                authorsString = "";
                                 for (int j = 0; j < authors.length(); j++) {
                                     String author = authors.getString(j);
                                     if (author.isEmpty()) {
