@@ -58,38 +58,58 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-        Button search = (Button) findViewById(R.id.search);
-        search.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                //Find the edit text's actual text and make it compatible for a url search query
-                searchQuery = ((EditText) findViewById(R.id.searchQuery)).getText().toString().replace(" ", "+");
-                //Check if user input is empty or it contains some query text
-                if (searchQuery.isEmpty()) {
-                    Context context = getApplicationContext();
-                    String text = "Nothing Entered in Search";
-                    int duration = Toast.LENGTH_LONG;
-                    Toast toast = Toast.makeText(context, text, duration);
-                    toast.show();
-                } else {
-                    // String to be attached to the BOOK_REQUEST_URL
-                    String appendableQuery = searchQuery + "&key=AIzaSyAN16J8Zakn2RQbFV4iBB8JrFPnFIev2wE&maxResults=10&country=IN";
-                    BOOK_REQUEST_URL += appendableQuery; //final value of "URL for Google Book API"
-                    BookAsyncTask task = new BookAsyncTask();
-                    //If network is available then perform the further task of AsynckTask calling
-                    if (isNetworkAvailable()) {
-                        // Kick off an {@link AsyncTask} to perform the network request
-                        task.execute();
+
+        if (savedInstanceState == null) {
+            super.onCreate(savedInstanceState);
+            setContentView(R.layout.activity_main);
+            Button search = (Button) findViewById(R.id.search);
+            search.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    //Find the edit text's actual text and make it compatible for a url search query
+                    searchQuery = ((EditText) findViewById(R.id.searchQuery)).getText().toString().replace(" ", "+");
+                    //Check if user input is empty or it contains some query text
+                    if (searchQuery.isEmpty()) {
+                        Context context = getApplicationContext();
+                        String text = "Nothing Entered in Search";
+                        int duration = Toast.LENGTH_LONG;
+                        Toast toast = Toast.makeText(context, text, duration);
+                        toast.show();
                     } else {
-                        Toast.makeText(getApplicationContext(), "Network not available", Toast.LENGTH_SHORT).show();
-                        //Reset the to the original URL to prevent app crash
-                        BOOK_REQUEST_URL = "https://www.googleapis.com/books/v1/volumes?q=";
+                        // String to be attached to the BOOK_REQUEST_URL
+                        String appendableQuery = searchQuery + "&key=AIzaSyAN16J8Zakn2RQbFV4iBB8JrFPnFIev2wE&maxResults=10&country=IN";
+                        BOOK_REQUEST_URL += appendableQuery; //final value of "URL for Google Book API"
+                        BookAsyncTask task = new BookAsyncTask();
+                        //If network is available then perform the further task of AsynckTask calling
+                        if (isNetworkAvailable()) {
+                            // Kick off an {@link AsyncTask} to perform the network request
+                            task.execute();
+                        } else {
+                            Toast.makeText(getApplicationContext(), "Network not available", Toast.LENGTH_SHORT).show();
+                            //Reset the to the original URL to prevent app crash
+                            BOOK_REQUEST_URL = "https://www.googleapis.com/books/v1/volumes?q=";
+                        }
                     }
                 }
-            }
-        });
+            });
+        } else if (savedInstanceState != null){
+            super.onCreate(savedInstanceState);
+            setContentView(R.layout.activity_main);
+            mBooks = savedInstanceState.getParcelableArrayList("booksObjectBundle");
+            BooksAdapter adapter = new BooksAdapter(this, mBooks);
+            ListView listView = (ListView) findViewById(R.id.list);
+            listView.setAdapter(adapter);
+            listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
+                    //Books bookses = book.get(position);
+                    Books bookses = mBooks.get(position);
+                    Intent booksIntent = new Intent(getApplicationContext(), BookDetailsActivity.class);
+                    booksIntent.putExtra("booksObjectBundle", bookses);
+                    startActivity(booksIntent);
+                }
+            });
+        }
     }
 
     //Check if network is available or not
@@ -146,7 +166,6 @@ public class MainActivity extends AppCompatActivity {
                 }
             });
         }
-
         super.onRestoreInstanceState(savedInstanceState);
     }
 
