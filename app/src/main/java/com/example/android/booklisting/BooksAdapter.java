@@ -5,8 +5,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.ImageView;
-import android.widget.ListAdapter;
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -38,7 +36,7 @@ public class BooksAdapter extends ArrayAdapter<Books> {
             // If there's no view to re-use, inflate a brand new view for row
             viewHolder = new ViewHolder();
             LayoutInflater inflater = LayoutInflater.from(getContext());
-            convertView = inflater.inflate(R.layout.list_items, parent, false);
+            convertView = inflater.inflate(R.layout.activity_main_items, parent, false);
                         /*Find the TextView and ImageView and set them on the VIewHolder*/
             viewHolder.title = (TextView) convertView.findViewById(R.id.title);
             viewHolder.author = (TextView) convertView.findViewById(R.id.author);

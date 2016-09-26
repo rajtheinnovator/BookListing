@@ -1,18 +1,17 @@
 package com.example.android.booklisting;
 
 import android.content.Context;
+import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
+import android.support.v7.app.AppCompatActivity;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ListAdapter;
 import android.widget.ListView;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import org.json.JSONArray;
@@ -29,12 +28,11 @@ import java.net.URL;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 
-import static android.R.attr.description;
-
 public class MainActivity extends AppCompatActivity {
 
+
     String title;
-    String firstAuthor;
+    String authorsString = "";
     String publisher;
     String pageCount;
     String description;
@@ -90,7 +88,6 @@ public class MainActivity extends AppCompatActivity {
             }
         });
     }
-
     //Check if network is available or not
     private boolean isNetworkAvailable() {
         ConnectivityManager connectivityManager
@@ -102,18 +99,62 @@ public class MainActivity extends AppCompatActivity {
     /**
      * Update the screen to display information from the given {@link Books}.
      */
-    private void updateUi(ArrayList<Books> book) {
-        ListView listView = (ListView) findViewById(R.id.list);
+    private void updateUi(final ArrayList<Books> book) {
+        final ListView listView = (ListView) findViewById(R.id.list);
         BooksAdapter booksAdapter = new BooksAdapter(MainActivity.this, book);
         listView.setAdapter(booksAdapter);
-        //create bundle for Book's details Intent
-        Bundle bookDetailsBundle = new Bundle();
-        ArrayList<Books> booksDetails = new ArrayList<Books>();
-        booksDetails.add(new Books(booksObject.getTitle(), booksObject.getAuthor(), booksObject.getPublisher(),
-                booksObject.getPageCount(), booksObject.getDescription(), booksObject.getRatings(),
-                booksObject.getPublishedDate(), booksObject.getISBNType(), booksObject.getISBNValue()));
-    }
 
+                /*Setting click listener on ListView*/
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
+                //Books bookses = book.get(position);
+                Bundle bookDetailsBundle = new Bundle();
+                bookDetailsBundle.putParcelable("booksObject", booksObject);
+                Intent booksIntent = new Intent(getApplicationContext(), BookDetailsActivity.class);
+                booksIntent.putExtra("booksObjectBundle", booksObject);
+                startActivity(booksIntent);
+            }
+        });
+    }
+    @Override
+    public void onSaveInstanceState(Bundle savedInstanceState) {
+        // Save the user's current game state
+        savedInstanceState.putString("title", title);
+        savedInstanceState.putString("authorsString", authorsString);
+        savedInstanceState.putString("publisher", publisher);
+        savedInstanceState.putInt("averageRating", averageRating);
+        savedInstanceState.putString("pageCount", pageCount);
+        savedInstanceState.putString("description", description);
+        savedInstanceState.putString("publishedDate", publishedDate);
+        savedInstanceState.putString("isbnType", isbnType);
+        savedInstanceState.putString("isbnValue", isbnValue);
+
+        // Always call the superclass so it can save the view hierarchy state
+        super.onSaveInstanceState(savedInstanceState);
+    }
+    public void onRestoreInstanceState(Bundle savedInstanceState) {
+
+                // Restore state members from saved instance
+        title = savedInstanceState.getString("title");
+        authorsString = savedInstanceState.getString("authorsString");
+        publisher = savedInstanceState.getString("publisher");
+        averageRating = savedInstanceState.getInt("averageRating");
+        pageCount = savedInstanceState.getString("pageCount");
+        description = savedInstanceState.getString("description");
+        publishedDate = savedInstanceState.getString("publishedDate");
+        isbnType = savedInstanceState.getString("isbnType");
+        isbnValue = savedInstanceState.getString("isbnValue");
+
+        // Always call the superclass so it can restore the view hierarchy
+        super.onRestoreInstanceState(savedInstanceState);
+        ArrayList<Books> bookses = new ArrayList<>();
+        bookses.add(new Books(title, authorsString, publisher));
+        ListView listView1 = (ListView) findViewById(R.id.list);
+        BooksAdapter booksAdapter = new BooksAdapter(MainActivity.this, bookses);
+        //booksAdapter.clear();
+        listView1.setAdapter(booksAdapter);
+    }
     /**
      * {@link AsyncTask} to perform the network request on a background thread, and then
      * update the UI with the first earthquake in the response.
@@ -239,24 +280,33 @@ public class MainActivity extends AppCompatActivity {
                         for (int i = 0; i < itemsArray.length(); i++) {
                             JSONObject volumeInfo = itemsArray.getJSONObject(i).getJSONObject("volumeInfo");
                             //Check if the JSONObject volumeInfo has the desired string with value "title" and then only proceed
+                            booksObject.setVolumeId(i);
                             if (volumeInfo.has("title")) {
                                 title = volumeInfo.getString("title");
                                 booksObject.setTitle(title);
                             }
-                            // String publisher = volumeInfo.getString("publisher");
                             //Check if the JSONObject volumeInfo has the desired string with value "authors" and then only proceed
                             if (volumeInfo.has("authors")) {
                                 JSONArray authors = volumeInfo.getJSONArray("authors");
-                                //get first author's name
-                                firstAuthor = authors.getString(0);
-                                booksObject.setAuthor(firstAuthor);
+                                //get author(s) name
+                                for (int j = 0; j < authors.length(); j++) {
+                                    String author = authors.getString(j);
+                                    if (author.isEmpty()) {
+                                        authorsString = "N/A";
+                                    } else if (j == (authors.length() - 1)) {
+                                        authorsString = authorsString + " and " + author;
+                                        /**Else concatenate the author with a comma
+                                         * ( these are all the iterations between the first and final )**/
+                                    } else {
+                                        authorsString = authorsString + ", " + author;
+                                    }
+                                }
+                                booksObject.setAuthor(authorsString);
                             }
                             if (volumeInfo.has("publisher")) {
                                 publisher = volumeInfo.getString("publisher");
                                 booksObject.setPublisher(publisher);
                             }
-                            arrayListOfBooks.add(new Books(booksObject.getTitle(),
-                                    booksObject.getAuthor(), booksObject.getPublisher()));
                             if (volumeInfo.has("pageCount")) {
                                 pageCount = volumeInfo.getString("pageCount");
                                 booksObject.setPageCount(pageCount);
@@ -278,7 +328,12 @@ public class MainActivity extends AppCompatActivity {
                                 JSONObject firstISBN = industryIdentifiers.getJSONObject(0);
                                 isbnType = firstISBN.getString("type");
                                 isbnValue = firstISBN.getString("identifier");
+                                booksObject.setISBNType(isbnType);
+                                booksObject.setISBNValue(isbnValue);
                             }
+                            arrayListOfBooks.add(new Books(booksObject.getTitle(), booksObject.getAuthor(), booksObject.getPublisher(),
+                                    booksObject.getPageCount(), booksObject.getDescription(), booksObject.getRatings(),
+                                    booksObject.getPublishedDate(), booksObject.getISBNType(), booksObject.getISBNValue()));
                         }
                     }
                     return arrayListOfBooks;

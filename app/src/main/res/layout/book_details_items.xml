@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/book_details_item"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/title_book"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        tools:text="book's title" />
+
+    <TextView
+        android:id="@+id/author_book"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        tools:text="book's title" />
+
+    <TextView
+        android:id="@+id/publisher_book"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        tools:text="book's title" />
+
+    <TextView
+        android:id="@+id/page_count_book"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        tools:text="book's title" />
+
+    <TextView
+        android:id="@+id/description_book"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        tools:text="book's title" />
+
+    <TextView
+        android:id="@+id/ratings_book"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        tools:text="book's title" />
+
+    <TextView
+        android:id="@+id/publication_date_book"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        tools:text="book's title" />
+
+    <TextView
+        android:id="@+id/isbn_type_book"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        tools:text="book's title" />
+
+    <TextView
+        android:id="@+id/isbn_value_book"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        tools:text="book's title" />
+
+</LinearLayout>

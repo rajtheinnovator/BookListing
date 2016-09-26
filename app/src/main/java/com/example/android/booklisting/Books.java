@@ -26,6 +26,7 @@ public class Books implements Parcelable {
     private String mPublishedDate;
     private String mISBNType;
     private String mISBNValue;
+    private int mVolumeId;
 
     //    private final String mImageLink;
     //    private final String mPreviewLink;
@@ -54,7 +55,7 @@ public class Books implements Parcelable {
      */
     public Books(String bookTitle, String bookAuthor, String publisher, String pageCount,
                  String description, int ratings, String publishedDate, String iSBNType, String iSBNValue) {
-        mTitle = bookTitle;
+              mTitle = bookTitle;
         mAuthor = bookAuthor;
         mPublisher = publisher;
         mPageCount = pageCount;
@@ -63,7 +64,11 @@ public class Books implements Parcelable {
         mPublishedDate = publishedDate;
         mISBNType = iSBNType;
         mISBNValue = iSBNValue;
-    }
+            }
+
+    public void setVolumeId(int volumeId){mVolumeId = volumeId;}
+
+    public int getVolumeId(){return mVolumeId;}
 
     public void setTitle(String title) {
         mTitle = title;
@@ -96,9 +101,11 @@ public class Books implements Parcelable {
     public String getPageCount() {
         return mPageCount;
     }
+
     public void setDescription(String description) {
-         mDescription = description;
+        mDescription = description;
     }
+
     public String getDescription() {
         return mDescription;
     }
@@ -142,6 +149,7 @@ public class Books implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel out, int flags) {
+        out.writeInt(mVolumeId);
         out.writeString(mTitle);
         out.writeString(mAuthor);
         out.writeString(mPublisher);
@@ -154,6 +162,7 @@ public class Books implements Parcelable {
     }
 
     private Books(Parcel in) {
+        mVolumeId = in.readInt();
         mTitle = in.readString();
         mAuthor = in.readString();
         mPublisher = in.readString();
