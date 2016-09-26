@@ -111,10 +111,9 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
                 //Books bookses = book.get(position);
-                Bundle bookDetailsBundle = new Bundle();
-                bookDetailsBundle.putParcelable("booksObject", booksObject);
+                Books bookses = book.get(position);
                 Intent booksIntent = new Intent(getApplicationContext(), BookDetailsActivity.class);
-                booksIntent.putExtra("booksObjectBundle", booksObject);
+                booksIntent.putExtra("booksObjectBundle", bookses);
                 startActivity(booksIntent);
             }
         });

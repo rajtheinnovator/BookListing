@@ -55,7 +55,7 @@ public class Books implements Parcelable {
      */
     public Books(String bookTitle, String bookAuthor, String publisher, String pageCount,
                  String description, int ratings, String publishedDate, String iSBNType, String iSBNValue) {
-              mTitle = bookTitle;
+        mTitle = bookTitle;
         mAuthor = bookAuthor;
         mPublisher = publisher;
         mPageCount = pageCount;
@@ -64,11 +64,15 @@ public class Books implements Parcelable {
         mPublishedDate = publishedDate;
         mISBNType = iSBNType;
         mISBNValue = iSBNValue;
-            }
+    }
 
-    public void setVolumeId(int volumeId){mVolumeId = volumeId;}
+    public void setVolumeId(int volumeId) {
+        mVolumeId = volumeId;
+    }
 
-    public int getVolumeId(){return mVolumeId;}
+    public int getVolumeId() {
+        return mVolumeId;
+    }
 
     public void setTitle(String title) {
         mTitle = title;
