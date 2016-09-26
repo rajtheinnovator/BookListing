@@ -40,6 +40,7 @@ public class MainActivity extends AppCompatActivity {
     String publishedDate;
     String isbnType;
     String isbnValue;
+    private ArrayList<Books> mBooks;
     Books booksObject = new Books();
 
     private String searchQuery;
@@ -88,6 +89,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
     }
+
     //Check if network is available or not
     private boolean isNetworkAvailable() {
         ConnectivityManager connectivityManager
@@ -117,44 +119,26 @@ public class MainActivity extends AppCompatActivity {
             }
         });
     }
+
     @Override
     public void onSaveInstanceState(Bundle savedInstanceState) {
         // Save the user's current game state
-        savedInstanceState.putString("title", title);
-        savedInstanceState.putString("authorsString", authorsString);
-        savedInstanceState.putString("publisher", publisher);
-        savedInstanceState.putInt("averageRating", averageRating);
-        savedInstanceState.putString("pageCount", pageCount);
-        savedInstanceState.putString("description", description);
-        savedInstanceState.putString("publishedDate", publishedDate);
-        savedInstanceState.putString("isbnType", isbnType);
-        savedInstanceState.putString("isbnValue", isbnValue);
-
+        savedInstanceState.putParcelableArrayList("mBooks", mBooks);
         // Always call the superclass so it can save the view hierarchy state
         super.onSaveInstanceState(savedInstanceState);
     }
+
     public void onRestoreInstanceState(Bundle savedInstanceState) {
-
-                // Restore state members from saved instance
-        title = savedInstanceState.getString("title");
-        authorsString = savedInstanceState.getString("authorsString");
-        publisher = savedInstanceState.getString("publisher");
-        averageRating = savedInstanceState.getInt("averageRating");
-        pageCount = savedInstanceState.getString("pageCount");
-        description = savedInstanceState.getString("description");
-        publishedDate = savedInstanceState.getString("publishedDate");
-        isbnType = savedInstanceState.getString("isbnType");
-        isbnValue = savedInstanceState.getString("isbnValue");
-
         // Always call the superclass so it can restore the view hierarchy
         super.onRestoreInstanceState(savedInstanceState);
-        ArrayList<Books> bookses = new ArrayList<>();
-        bookses.add(new Books(title, authorsString, publisher));
+        // Restore state members from saved instance
+        mBooks = savedInstanceState.getParcelableArrayList("mBooks");
         ListView listView1 = (ListView) findViewById(R.id.list);
-        BooksAdapter booksAdapter = new BooksAdapter(MainActivity.this, bookses);
+        BooksAdapter booksAdapter = new BooksAdapter(MainActivity.this, mBooks);
         //booksAdapter.clear();
         listView1.setAdapter(booksAdapter);
     }
+
     /**
      * {@link AsyncTask} to perform the network request on a background thread, and then
      * update the UI with the first earthquake in the response.
@@ -189,6 +173,7 @@ public class MainActivity extends AppCompatActivity {
             if (book == null) {
                 return;
             }
+            mBooks = book;
             updateUi(book);
             EditText editText = (EditText) findViewById(R.id.searchQuery);
             editText.setText(null);
