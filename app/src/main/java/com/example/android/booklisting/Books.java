@@ -12,10 +12,8 @@ public class Books implements Parcelable {
      * Title of the book
      */
     private String mTitle;
-
     /* author of the book*/
     private String mAuthor;
-
     /*publisher of the book*/
     private String mPublisher;
 
@@ -30,6 +28,11 @@ public class Books implements Parcelable {
 
     //    private final String mImageLink;
     //    private final String mPreviewLink;
+
+    /**
+     * Create an empty constructor so that an empty Book's object can be referenced
+     * in the MainActivity for storing book's info
+     */
     public Books() {
     }
 
@@ -49,10 +52,18 @@ public class Books implements Parcelable {
     /**
      * Constructs a new {@link Books} for Book's details Intnt
      *
-     * @param bookTitle  is the title of the book
-     * @param bookAuthor is the author
-     * @param publisher  is the publisher of the book
+     * @param bookTitle            is the title of the book
+     * @param bookAuthor           is the author
+     * @param publisher            is the publisher of the book
+     * @param pageCount            is the page count of the book
+     * @param description          is the description of the book
+     * @param ratings              is the ratings of the book
+     * @param publishedDate        is the published date of the book
+     * @param iSBNType             is the ISBN Type of the book
+     * @param iSBNValue            is the ISBN Value of the book
+     * @param bookImageResourceURL is the Book's Image Resource URL of the book
      */
+    //Used to store all the info of the selected Book on List item click on the MainActivity
     public Books(String bookTitle, String bookAuthor, String publisher, String pageCount,
                  String description, int ratings, String publishedDate, String iSBNType,
                  String iSBNValue, String bookImageResourceURL) {
@@ -68,86 +79,95 @@ public class Books implements Parcelable {
         mBookImageResourceURL = bookImageResourceURL;
     }
 
+    /**
+     * The Setters Methods
+     */
     public void setBookImageResourceURL(String bookImageResourceURL) {
         mBookImageResourceURL = bookImageResourceURL;
-    }
-
-    public String getBookImageResourceURL() {
-        return mBookImageResourceURL;
     }
 
     public void setTitle(String title) {
         mTitle = title;
     }
 
-    public String getTitle() {
-        return mTitle;
-    }
-
     public void setAuthor(String author) {
         mAuthor = author;
-    }
-
-    public String getAuthor() {
-        return mAuthor;
     }
 
     public void setPublisher(String publisher) {
         mPublisher = publisher;
     }
 
-    public String getPublisher() {
-        return mPublisher;
-    }
-
     public void setPageCount(String pageCount) {
         mPageCount = pageCount;
-    }
-
-    public String getPageCount() {
-        return mPageCount;
     }
 
     public void setDescription(String description) {
         mDescription = description;
     }
 
-    public String getDescription() {
-        return mDescription;
-    }
-
     public void setRatings(int ratings) {
         mRatings = ratings;
-    }
-
-    public int getRatings() {
-        return mRatings;
     }
 
     public void setPublishedDate(String publishedDate) {
         mPublishedDate = publishedDate;
     }
 
-    public String getPublishedDate() {
-        return mPublishedDate;
-    }
-
     public void setISBNType(String isbnType) {
         mISBNType = isbnType;
-    }
-
-    public String getISBNType() {
-        return mISBNType;
     }
 
     public void setISBNValue(String isbnValue) {
         mISBNValue = isbnValue;
     }
 
+    public String getBookImageResourceURL() {
+        return mBookImageResourceURL;
+    }
+
+    /**
+     * The Getters Methods
+     */
+    public String getTitle() {
+        return mTitle;
+    }
+
+    public String getAuthor() {
+        return mAuthor;
+    }
+
+    public String getPublisher() {
+        return mPublisher;
+    }
+
+    public String getPageCount() {
+        return mPageCount;
+    }
+
+    public String getDescription() {
+        return mDescription;
+    }
+
+    public int getRatings() {
+        return mRatings;
+    }
+
+    public String getPublishedDate() {
+        return mPublishedDate;
+    }
+
+    public String getISBNType() {
+        return mISBNType;
+    }
+
     public String getISBNValue() {
         return mISBNValue;
     }
 
+    /**
+     * Make Parcelabe Work Through these methods
+     */
     @Override
     public int describeContents() {
         return 0;

@@ -22,7 +22,8 @@ public class BooksAdapter extends ArrayAdapter<Books> {
         TextView publisher;
     }
 
-    public BooksAdapter(Context context, ArrayList<Books> books){
+    //Default Constructor
+    public BooksAdapter(Context context, ArrayList<Books> books) {
         super(context, 0, books);
     }
 
@@ -41,16 +42,6 @@ public class BooksAdapter extends ArrayAdapter<Books> {
             viewHolder.title = (TextView) convertView.findViewById(R.id.title);
             viewHolder.author = (TextView) convertView.findViewById(R.id.author);
             viewHolder.publisher = (TextView) convertView.findViewById(R.id.publisher);
-//            /* Check if the current position list item has a image, and if has then set the
-//            * visibility to True otherwise make it disapper using View.GONE
-//            */
-//            if (currentBook.hasImage()) {
-//                viewHolder.author.setVisibility(View.VISIBLE);
-//            } else {
-//                viewHolder.author.setVisibility(View.GONE);
-//            }
-
-
             // Cache the viewHolder object inside the fresh view
             convertView.setTag(viewHolder);
         } else {

@@ -18,7 +18,7 @@ import java.util.ArrayList;
 
 public class BookDetailsAdapter extends ArrayAdapter<Books> {
 
-
+    /**Default Constructor**/
     public BookDetailsAdapter(Context context, ArrayList<Books> bookses) {
         super(context, 0, bookses);
     }
@@ -32,11 +32,10 @@ public class BookDetailsAdapter extends ArrayAdapter<Books> {
             listItemView = LayoutInflater.from(getContext()).inflate(
                     R.layout.book_details_items, parent, false);
         }
-
         // Get the {@link AndroidFlavor} object located at this position in the list
         Books currentBook = getItem(position);
 
-        // Find the TextView in the list_item.xml layout with the ID version_name
+        // Find the TextViews in the list_item.xml layout with the their ID
         TextView title_book = (TextView) listItemView.findViewById(R.id.title_book);
         TextView author_book = (TextView) listItemView.findViewById(R.id.author_book);
         TextView publisher_book = (TextView) listItemView.findViewById(R.id.publisher_book);
@@ -46,9 +45,10 @@ public class BookDetailsAdapter extends ArrayAdapter<Books> {
         TextView publication_date_book = (TextView) listItemView.findViewById(R.id.publication_date_book);
         TextView isbn_type_book = (TextView) listItemView.findViewById(R.id.isbn_type_book);
         TextView isbn_value_book = (TextView) listItemView.findViewById(R.id.isbn_value_book);
+        /**ImageView to be populated later using ImageLoader**/
         ImageView bookImageView = (ImageView) listItemView.findViewById(R.id.book_image);
 
-        // set this text on these TextViews
+        // set appropriate texts on these TextViews
         //bookImageView.setImageBitmap();
         title_book.setText(currentBook.getTitle());
         author_book.setText(currentBook.getAuthor());
@@ -59,7 +59,7 @@ public class BookDetailsAdapter extends ArrayAdapter<Books> {
         publication_date_book.setText(currentBook.getPublishedDate());
         isbn_type_book.setText(currentBook.getISBNType());
         isbn_value_book.setText(currentBook.getISBNValue());
-
+        /**Return the populated ListView to the BookDetailsActivity**/
         return listItemView;
     }
 }

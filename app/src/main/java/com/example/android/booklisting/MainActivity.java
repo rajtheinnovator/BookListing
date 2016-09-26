@@ -7,6 +7,10 @@ import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
@@ -30,22 +34,28 @@ import java.util.ArrayList;
 
 import static android.R.attr.data;
 
-public class MainActivity extends AppCompatActivity {
-
-
-    String title;
-    String authorsString = "";
-    String publisher;
-    String pageCount;
-    String description;
-    int averageRating;
-    String publishedDate;
-    String isbnType;
-    String isbnValue;
-    String bookImageResourceURL;
+public class MainActivity extends MenuActivity {
+    /**
+     * Variables for storing Book's information
+     */
+    private String title;
+    private String authorsString = "";
+    private String publisher;
+    private String pageCount;
+    private String description;
+    private int averageRating;
+    private String publishedDate;
+    private String isbnType;
+    private String isbnValue;
+    private String bookImageResourceURL;
     private ArrayList<Books> mBooks;
+    /**
+     * Create Book's Object for storing info of the clicked Book from the ListView
+     */
     Books booksObject = new Books();
-
+    /**
+     * Save the user input in this variable
+     */
     private String searchQuery;
     /**
      * Tag for the log messages
@@ -61,7 +71,9 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        //Find the Search Button
         Button search = (Button) findViewById(R.id.search);
+        //Set click Listener on Search Button Click
         search.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -108,8 +120,7 @@ public class MainActivity extends AppCompatActivity {
         final ListView listView = (ListView) findViewById(R.id.list);
         BooksAdapter booksAdapter = new BooksAdapter(MainActivity.this, book);
         listView.setAdapter(booksAdapter);
-
-                /*Setting click listener on ListView*/
+        /*Setting click listener on ListView*/
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
@@ -122,6 +133,9 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * Save the state on rotation of device
+     */
     @Override
     public void onSaveInstanceState(Bundle savedInstanceState) {
         // Save the user's current game state
@@ -130,6 +144,9 @@ public class MainActivity extends AppCompatActivity {
         super.onSaveInstanceState(savedInstanceState);
     }
 
+    /**
+     * Save the state on rotation of device
+     */
     public void onRestoreInstanceState(Bundle savedInstanceState) {
         if (savedInstanceState != null) {
             mBooks = savedInstanceState.getParcelableArrayList("booksObjectBundle");
@@ -186,6 +203,7 @@ public class MainActivity extends AppCompatActivity {
             }
             mBooks = book;
             updateUi(book);
+            //Make the EditText go Blank after the queried search is fetched
             EditText editText = (EditText) findViewById(R.id.searchQuery);
             editText.setText(null);
             BOOK_REQUEST_URL = "https://www.googleapis.com/books/v1/volumes?q=";  //Reset the to the original URL
@@ -299,26 +317,32 @@ public class MainActivity extends AppCompatActivity {
                                 }
                                 booksObject.setAuthor(authorsString);
                             }
+                            //get publisher(s) name
                             if (volumeInfo.has("publisher")) {
                                 publisher = volumeInfo.getString("publisher");
                                 booksObject.setPublisher(publisher);
                             }
+                            //get page count of the book
                             if (volumeInfo.has("pageCount")) {
                                 pageCount = volumeInfo.getString("pageCount");
                                 booksObject.setPageCount(pageCount);
                             }
+                            //get description of the book
                             if (volumeInfo.has("description")) {
                                 description = volumeInfo.getString("description");
                                 booksObject.setDescription(description);
                             }
+                            //get ratings of the book
                             if (volumeInfo.has("averageRating")) {
                                 averageRating = volumeInfo.getInt("averageRating");
                                 booksObject.setRatings(averageRating);
                             }
+                            //get publication date of the book
                             if (volumeInfo.has("publishedDate")) {
                                 publishedDate = volumeInfo.getString("publishedDate");
                                 booksObject.setPublishedDate(publishedDate);
                             }
+                            //get ISBN details of the book
                             if (volumeInfo.has("industryIdentifiers")) {
                                 JSONArray industryIdentifiers = volumeInfo.getJSONArray("industryIdentifiers");
                                 JSONObject firstISBN = industryIdentifiers.getJSONObject(0);
@@ -327,15 +351,17 @@ public class MainActivity extends AppCompatActivity {
                                 booksObject.setISBNType(isbnType);
                                 booksObject.setISBNValue(isbnValue);
                             }
-                            if (volumeInfo.has("thumbnail")){
+                            //get thumbnails of the book
+                            if (volumeInfo.has("thumbnail")) {
                                 bookImageResourceURL = volumeInfo.getString("thumbnail");
                                 booksObject.setBookImageResourceURL(bookImageResourceURL);
-                            }else {
-                                if (volumeInfo.has("smallThumbnail")){
+                            } else {
+                                if (volumeInfo.has("smallThumbnail")) {
                                     bookImageResourceURL = volumeInfo.getString("smallThumbnail");
                                     booksObject.setBookImageResourceURL("smallThumbnail");
                                 }
                             }
+                            //Put all these books info in a custom ArrayList
                             arrayListOfBooks.add(new Books(booksObject.getTitle(), booksObject.getAuthor(), booksObject.getPublisher(),
                                     booksObject.getPageCount(), booksObject.getDescription(), booksObject.getRatings(),
                                     booksObject.getPublishedDate(), booksObject.getISBNType(),
