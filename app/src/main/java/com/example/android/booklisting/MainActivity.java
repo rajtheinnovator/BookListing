@@ -58,8 +58,6 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-
-        if (savedInstanceState == null) {
             super.onCreate(savedInstanceState);
             setContentView(R.layout.activity_main);
             Button search = (Button) findViewById(R.id.search);
@@ -92,24 +90,6 @@ public class MainActivity extends AppCompatActivity {
                     }
                 }
             });
-        } else if (savedInstanceState != null){
-            super.onCreate(savedInstanceState);
-            setContentView(R.layout.activity_main);
-            mBooks = savedInstanceState.getParcelableArrayList("booksObjectBundle");
-            BooksAdapter adapter = new BooksAdapter(this, mBooks);
-            ListView listView = (ListView) findViewById(R.id.list);
-            listView.setAdapter(adapter);
-            listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                @Override
-                public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
-                    //Books bookses = book.get(position);
-                    Books bookses = mBooks.get(position);
-                    Intent booksIntent = new Intent(getApplicationContext(), BookDetailsActivity.class);
-                    booksIntent.putExtra("booksObjectBundle", bookses);
-                    startActivity(booksIntent);
-                }
-            });
-        }
     }
 
     //Check if network is available or not
