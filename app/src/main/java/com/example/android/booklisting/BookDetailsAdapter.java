@@ -8,6 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
+import android.widget.RatingBar;
 import android.widget.TextView;
 import java.util.ArrayList;
 
@@ -21,9 +22,6 @@ public class BookDetailsAdapter extends ArrayAdapter<Books> {
     public BookDetailsAdapter(Context context, ArrayList<Books> bookses) {
         super(context, 0, bookses);
     }
-//    public BookDetailsAdapter(Activity context, Books bookses) {
-//         super(context, 0, bookses);
-//    }
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
@@ -44,20 +42,20 @@ public class BookDetailsAdapter extends ArrayAdapter<Books> {
         TextView publisher_book = (TextView) listItemView.findViewById(R.id.publisher_book);
         TextView page_count_book = (TextView) listItemView.findViewById(R.id.page_count_book);
         TextView description_book = (TextView) listItemView.findViewById(R.id.description_book);
-        TextView ratings_book = (TextView) listItemView.findViewById(R.id.ratings_book);
+        RatingBar ratings_book = (RatingBar) listItemView.findViewById(R.id.ratings_book);
         TextView publication_date_book = (TextView) listItemView.findViewById(R.id.publication_date_book);
         TextView isbn_type_book = (TextView) listItemView.findViewById(R.id.isbn_type_book);
         TextView isbn_value_book = (TextView) listItemView.findViewById(R.id.isbn_value_book);
         ImageView bookImageView = (ImageView) listItemView.findViewById(R.id.book_image);
 
-             // set this text on these TextViews
+        // set this text on these TextViews
         //bookImageView.setImageBitmap();
         title_book.setText(currentBook.getTitle());
         author_book.setText(currentBook.getAuthor());
         publisher_book.setText(currentBook.getPublisher());
         page_count_book.setText(currentBook.getPageCount());
         description_book.setText(currentBook.getDescription());
-        ratings_book.setText((String.valueOf(currentBook.getRatings())));
+        ratings_book.setRating((float) currentBook.getRatings());
         publication_date_book.setText(currentBook.getPublishedDate());
         isbn_type_book.setText(currentBook.getISBNType());
         isbn_value_book.setText(currentBook.getISBNValue());
