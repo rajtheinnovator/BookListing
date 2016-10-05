@@ -2,6 +2,9 @@ package com.example.android.booklisting;
 
 import android.app.Activity;
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,6 +13,8 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.RatingBar;
 import android.widget.TextView;
+
+import java.io.InputStream;
 import java.util.ArrayList;
 
 /**
@@ -18,7 +23,9 @@ import java.util.ArrayList;
 
 public class BookDetailsAdapter extends ArrayAdapter<Books> {
 
-    /**Default Constructor**/
+    /**
+     * Default Constructor
+     **/
     public BookDetailsAdapter(Context context, ArrayList<Books> bookses) {
         super(context, 0, bookses);
     }
@@ -59,7 +66,34 @@ public class BookDetailsAdapter extends ArrayAdapter<Books> {
         publication_date_book.setText(currentBook.getPublishedDate());
         isbn_type_book.setText(currentBook.getISBNType());
         isbn_value_book.setText(currentBook.getISBNValue());
+        //set the async task on the ImageView
+        new DownloadImageTask(bookImageView).execute(currentBook.getBookImageResourceURL().toString());
         /**Return the populated ListView to the BookDetailsActivity**/
         return listItemView;
+    }
+    //Setting the AsyncTask Class for loading Images
+    private class DownloadImageTask extends AsyncTask<String, Void, Bitmap> {
+        ImageView bmImage;
+
+        public DownloadImageTask(ImageView bmImage) {
+            this.bmImage = bmImage;
+        }
+
+        protected Bitmap doInBackground(String... urls) {
+            String urlDisplay = urls[0];
+            Bitmap mIcon11 = null;
+            try {
+                InputStream in = new java.net.URL(urlDisplay).openStream();
+                mIcon11 = BitmapFactory.decodeStream(in);
+            } catch (Exception e) {
+                // Log.e("Error", e.getMessage());
+                e.printStackTrace();
+            }
+            return mIcon11;
+        }
+
+        protected void onPostExecute(Bitmap result) {
+            bmImage.setImageBitmap(result);
+        }
     }
 }
