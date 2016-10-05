@@ -345,16 +345,15 @@ public class MainActivity extends MenuActivity {
                                 booksObject.setISBNValue(isbnValue);
                             }
                             //get thumbnails of the book
-                            if (volumeInfo.has("imageLinks")){
+                            if (volumeInfo.has("imageLinks")) {
                                 JSONObject imageLinks = volumeInfo.getJSONObject("imageLinks");
                                 if (imageLinks.has("thumbnail")) {
-                                    bookImageResourceURL = volumeInfo.getString("thumbnail");
+                                    bookImageResourceURL = imageLinks.getString("thumbnail");
                                     booksObject.setBookImageResourceURL(bookImageResourceURL);
-                                } else {
-                                    if (imageLinks.has("smallThumbnail")) {
-                                        bookImageResourceURL = volumeInfo.getString("smallThumbnail");
-                                        booksObject.setBookImageResourceURL("smallThumbnail");
-                                    }
+                                }
+                                else if (imageLinks.has("smallThumbnail")) {
+                                    bookImageResourceURL = imageLinks.getString("smallThumbnail");
+                                    booksObject.setBookImageResourceURL("smallThumbnail");
                                 }
                             }
 
