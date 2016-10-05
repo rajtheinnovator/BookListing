@@ -6,6 +6,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,7 +15,11 @@ import android.widget.ImageView;
 import android.widget.RatingBar;
 import android.widget.TextView;
 
+import java.io.IOException;
 import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.net.URLConnection;
 import java.util.ArrayList;
 
 /**
@@ -22,6 +27,7 @@ import java.util.ArrayList;
  */
 
 public class BookDetailsAdapter extends ArrayAdapter<Books> {
+    ImageView bookImageView;
 
     /**
      * Default Constructor
@@ -53,10 +59,9 @@ public class BookDetailsAdapter extends ArrayAdapter<Books> {
         TextView isbn_type_book = (TextView) listItemView.findViewById(R.id.isbn_type_book);
         TextView isbn_value_book = (TextView) listItemView.findViewById(R.id.isbn_value_book);
         /**ImageView to be populated later using ImageLoader**/
-        ImageView bookImageView = (ImageView) listItemView.findViewById(R.id.book_image);
+        bookImageView = (ImageView) listItemView.findViewById(R.id.book_image);
 
         // set appropriate texts on these TextViews
-        //bookImageView.setImageBitmap();
         title_book.setText(currentBook.getTitle());
         author_book.setText(currentBook.getAuthor());
         publisher_book.setText(currentBook.getPublisher());
@@ -67,11 +72,12 @@ public class BookDetailsAdapter extends ArrayAdapter<Books> {
         isbn_type_book.setText(currentBook.getISBNType());
         isbn_value_book.setText(currentBook.getISBNValue());
         //set the async task on the ImageView
-        new DownloadImageTask(bookImageView).execute(currentBook.getBookImageResourceURL().toString());
+        // Create an object for subclass of AsyncTask
+        new DownloadImageTask(bookImageView).execute(currentBook.getBookImageResourceURL());
         /**Return the populated ListView to the BookDetailsActivity**/
         return listItemView;
     }
-    //Setting the AsyncTask Class for loading Images
+
     private class DownloadImageTask extends AsyncTask<String, Void, Bitmap> {
         ImageView bmImage;
 
@@ -80,13 +86,12 @@ public class BookDetailsAdapter extends ArrayAdapter<Books> {
         }
 
         protected Bitmap doInBackground(String... urls) {
-            String urlDisplay = urls[0];
+            String urldisplay = urls[0];
             Bitmap mIcon11 = null;
             try {
-                InputStream in = new java.net.URL(urlDisplay).openStream();
+                InputStream in = new java.net.URL(urldisplay).openStream();
                 mIcon11 = BitmapFactory.decodeStream(in);
             } catch (Exception e) {
-                // Log.e("Error", e.getMessage());
                 e.printStackTrace();
             }
             return mIcon11;
