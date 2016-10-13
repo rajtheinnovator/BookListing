@@ -58,20 +58,23 @@ public class MainActivity extends MenuActivity {
      * URL to query the GoogleBook dataset for book's information
      */
     private static String BOOK_REQUEST_URL = "https://www.googleapis.com/books/v1/volumes?q=";
-    //http://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&starttime=2014-01-01&endtime=2014-12-01&minmagnitude=7
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
         //Find the Search Button
         Button search = (Button) findViewById(R.id.search);
+
         //Set click Listener on Search Button Click
         search.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+
                 //Find the edit text's actual text and make it compatible for a url search query
                 searchQuery = ((EditText) findViewById(R.id.searchQuery)).getText().toString().replace(" ", "+");
+
                 //Check if user input is empty or it contains some query text
                 if (searchQuery.isEmpty()) {
                     Context context = getApplicationContext();
@@ -117,7 +120,7 @@ public class MainActivity extends MenuActivity {
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
-                //Books bookses = book.get(position);
+
                 Books bookses = book.get(position);
                 Intent booksIntent = new Intent(getApplicationContext(), BookDetailsActivity.class);
                 booksIntent.putExtra("booksObjectBundle", bookses);
@@ -131,8 +134,10 @@ public class MainActivity extends MenuActivity {
      */
     @Override
     public void onSaveInstanceState(Bundle savedInstanceState) {
+
         // Save the user's current game state
         savedInstanceState.putParcelableArrayList("booksObjectBundle", mBooks);
+
         // Always call the superclass so it can save the view hierarchy state
         super.onSaveInstanceState(savedInstanceState);
     }
@@ -196,6 +201,7 @@ public class MainActivity extends MenuActivity {
             }
             mBooks = book;
             updateUi(book);
+
             //Make the EditText go Blank after the queried search is fetched
             EditText editText = (EditText) findViewById(R.id.searchQuery);
             editText.setText(null);
@@ -350,8 +356,7 @@ public class MainActivity extends MenuActivity {
                                 if (imageLinks.has("thumbnail")) {
                                     bookImageResourceURL = imageLinks.getString("thumbnail");
                                     booksObject.setBookImageResourceURL(bookImageResourceURL);
-                                }
-                                else if (imageLinks.has("smallThumbnail")) {
+                                } else if (imageLinks.has("smallThumbnail")) {
                                     bookImageResourceURL = imageLinks.getString("smallThumbnail");
                                     booksObject.setBookImageResourceURL("smallThumbnail");
                                 }

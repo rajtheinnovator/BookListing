@@ -1,12 +1,9 @@
 package com.example.android.booklisting;
 
-import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
-import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,11 +12,7 @@ import android.widget.ImageView;
 import android.widget.RatingBar;
 import android.widget.TextView;
 
-import java.io.IOException;
 import java.io.InputStream;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.net.URLConnection;
 import java.util.ArrayList;
 
 /**
@@ -27,6 +20,7 @@ import java.util.ArrayList;
  */
 
 public class BookDetailsAdapter extends ArrayAdapter<Books> {
+
     ImageView bookImageView;
 
     /**
@@ -45,6 +39,7 @@ public class BookDetailsAdapter extends ArrayAdapter<Books> {
             listItemView = LayoutInflater.from(getContext()).inflate(
                     R.layout.book_details_items, parent, false);
         }
+
         // Get the {@link AndroidFlavor} object located at this position in the list
         Books currentBook = getItem(position);
 
@@ -71,9 +66,12 @@ public class BookDetailsAdapter extends ArrayAdapter<Books> {
         publication_date_book.setText(currentBook.getPublishedDate());
         isbn_type_book.setText(currentBook.getISBNType());
         isbn_value_book.setText(currentBook.getISBNValue());
-        //set the async task on the ImageView
-        // Create an object for subclass of AsyncTask
+        /*
+        set the async task on the ImageView
+        Create an object for subclass of AsyncTask
+        */
         new DownloadImageTask(bookImageView).execute(currentBook.getBookImageResourceURL());
+
         /**Return the populated ListView to the BookDetailsActivity**/
         return listItemView;
     }

@@ -12,9 +12,10 @@ public class Books implements Parcelable {
      * Title of the book
      */
     private String mTitle;
-    /* author of the book*/
+    /** author of the book */
     private String mAuthor;
-    /*publisher of the book*/
+
+    /** publisher of the book */
     private String mPublisher;
 
     /*Variables for handling list view click*/
@@ -25,9 +26,6 @@ public class Books implements Parcelable {
     private String mISBNType;
     private String mISBNValue;
     private String mBookImageResourceURL;
-
-    //    private final String mImageLink;
-    //    private final String mPreviewLink;
 
     /**
      * Create an empty constructor so that an empty Book's object can be referenced
@@ -200,9 +198,11 @@ public class Books implements Parcelable {
         mISBNValue = in.readString();
     }
 
-    // After implementing the `Parcelable` interface, we need to create the
-    // `Parcelable.Creator<MyParcelable> CREATOR` constant for our class;
-    // Notice how it has our class specified as its type.
+    /*
+    After implementing the `Parcelable` interface, we need to create the
+    `Parcelable.Creator<MyParcelable> CREATOR` constant for our class;
+    Notice how it has our class specified as its type.
+    */
     public static final Parcelable.Creator<Books> CREATOR
             = new Parcelable.Creator<Books>() {
 

@@ -1,9 +1,7 @@
 package com.example.android.booklisting;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.net.Uri;
-import android.preference.PreferenceActivity;
 import android.support.v4.app.NavUtils;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
@@ -18,8 +16,10 @@ import static android.R.id.message;
  */
 
 public class MenuActivity extends AppCompatActivity {
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
+
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.items, menu);
 
