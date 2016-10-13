@@ -205,14 +205,14 @@ public class MainActivity extends MenuActivity {
          */
         @Override
         protected void onPostExecute(ArrayList<Books> book) {
-            if (book.isEmpty()) {
+            if (book == null) {
                 emptyView = (RelativeLayout) findViewById(R.id.empty_view);
                 listView.setEmptyView(emptyView);
                 return;
+            } else {
+                mBooks = book;
+                updateUi(book);
             }
-            mBooks = book;
-            updateUi(book);
-
             //Make the EditText go Blank after the queried search is fetched
             EditText editText = (EditText) findViewById(R.id.searchQuery);
             editText.setText(null);
