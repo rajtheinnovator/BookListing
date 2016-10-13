@@ -11,6 +11,8 @@ import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import org.json.JSONArray;
@@ -42,6 +44,9 @@ public class MainActivity extends MenuActivity {
     private String isbnValue;
     private String bookImageResourceURL;
     private ArrayList<Books> mBooks;
+
+    ListView listView;
+    RelativeLayout emptyView;
     /**
      * Create Book's Object for storing info of the clicked Book from the ListView
      */
@@ -66,6 +71,10 @@ public class MainActivity extends MenuActivity {
 
         //Find the Search Button
         Button search = (Button) findViewById(R.id.search);
+
+        //Hide the text view saying "No books Found
+        TextView noBookFound = (TextView) findViewById(R.id.empty_title_text);
+        noBookFound.setVisibility(View.GONE);
 
         //Set click Listener on Search Button Click
         search.setOnClickListener(new View.OnClickListener() {
@@ -149,7 +158,7 @@ public class MainActivity extends MenuActivity {
         if (savedInstanceState != null) {
             mBooks = savedInstanceState.getParcelableArrayList("booksObjectBundle");
             BooksAdapter adapter = new BooksAdapter(this, mBooks);
-            ListView listView = (ListView) findViewById(R.id.list);
+            listView = (ListView) findViewById(R.id.list);
             listView.setAdapter(adapter);
             listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 @Override
@@ -196,7 +205,9 @@ public class MainActivity extends MenuActivity {
          */
         @Override
         protected void onPostExecute(ArrayList<Books> book) {
-            if (book == null) {
+            if (book.isEmpty()) {
+                emptyView = (RelativeLayout) findViewById(R.id.empty_view);
+                listView.setEmptyView(emptyView);
                 return;
             }
             mBooks = book;

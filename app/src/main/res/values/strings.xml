@@ -8,4 +8,7 @@
     <string name="hello">MainActivity</string>
     <string name="exit">Exit</string>
     <string name="email">EMail</string>
+    <string name="empty_view_title_text">No books found</string>
+    <string name="empty_view_subtitle_text">Search book to populate this view. Type only the correct
+        name of the book</string>
 </resources>
