@@ -72,9 +72,14 @@ public class MainActivity extends MenuActivity {
         //Find the Search Button
         Button search = (Button) findViewById(R.id.search);
 
+        //initialise empty view
+        emptyView = (RelativeLayout) findViewById(R.id.empty_view);
+        emptyView.setVisibility(View.VISIBLE);
+
         //Hide the text view saying "No books Found
         TextView noBookFound = (TextView) findViewById(R.id.empty_title_text);
         noBookFound.setVisibility(View.GONE);
+        listView = (ListView) findViewById(R.id.list);
 
         //Set click Listener on Search Button Click
         search.setOnClickListener(new View.OnClickListener() {
@@ -122,7 +127,7 @@ public class MainActivity extends MenuActivity {
      * Update the screen to display information from the given {@link Books}.
      */
     private void updateUi(final ArrayList<Books> book) {
-        final ListView listView = (ListView) findViewById(R.id.list);
+        //final ListView listView = (ListView) findViewById(R.id.list);
         BooksAdapter booksAdapter = new BooksAdapter(MainActivity.this, book);
         listView.setAdapter(booksAdapter);
         /*Setting click listener on ListView*/
@@ -206,17 +211,29 @@ public class MainActivity extends MenuActivity {
         @Override
         protected void onPostExecute(ArrayList<Books> book) {
             if (book == null) {
-                emptyView = (RelativeLayout) findViewById(R.id.empty_view);
-                listView.setEmptyView(emptyView);
+                //show a new text view saying that no book was found
+                TextView noBookFound = (TextView) findViewById(R.id.empty_title_text);
+                noBookFound.setVisibility(View.VISIBLE);
+
+                //set the list view visibility to GONE
+                listView.setVisibility(View.GONE);
+
+                //Make the EditText go Blank after the queried search is fetched
+                EditText editText = (EditText) findViewById(R.id.searchQuery);
+                editText.setText(null);
+                BOOK_REQUEST_URL = "https://www.googleapis.com/books/v1/volumes?q=";  //Reset the to the original URL
                 return;
             } else {
+                //make listview appear
+                listView.setVisibility(View.VISIBLE);
+                //then get the book and update the view
                 mBooks = book;
                 updateUi(book);
+                //Make the EditText go Blank after the queried search is fetched
+                EditText editText = (EditText) findViewById(R.id.searchQuery);
+                editText.setText(null);
+                BOOK_REQUEST_URL = "https://www.googleapis.com/books/v1/volumes?q=";  //Reset the to the original URL
             }
-            //Make the EditText go Blank after the queried search is fetched
-            EditText editText = (EditText) findViewById(R.id.searchQuery);
-            editText.setText(null);
-            BOOK_REQUEST_URL = "https://www.googleapis.com/books/v1/volumes?q=";  //Reset the to the original URL
         }
 
         /**
@@ -318,7 +335,7 @@ public class MainActivity extends MenuActivity {
                                     if (author.isEmpty()) {
                                         authorsString = "N/A";
                                     } else if (j == (authors.length() - 1)) {
-                                        authorsString = authorsString + " and " + author;
+                                        authorsString = authorsString + ", " + author;
                                         /**Else concatenate the author with a comma
                                          * ( these are all the iterations between the first and final )**/
                                     } else {
@@ -382,10 +399,11 @@ public class MainActivity extends MenuActivity {
                     }
                     return arrayListOfBooks;
                 } else
-                    Toast.makeText(MainActivity.this, "No Book found, search again", Toast.LENGTH_SHORT).show();
+
+                return null;
 
             } catch (JSONException e) {
-                Toast.makeText(MainActivity.this, "Problem parsing the Google Books JSON results" + e, Toast.LENGTH_SHORT).show();
+                // handle exception
             }
             return null;
         }
